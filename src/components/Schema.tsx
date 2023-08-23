@@ -53,7 +53,7 @@ export const Schema: React.FC = () => {
                 <Column
                   key={index}
                   name={columnName}
-                  type={column?.type || "string"}
+                  type={column?.type ?? "string"}
                   onChangeType={(value) => {
                     onChangeType(columnName, value);
                   }}

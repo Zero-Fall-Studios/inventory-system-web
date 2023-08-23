@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { useDatabase } from "./DatabaseProvider";
 import { JSONInput } from "./JSONInput";
 
@@ -6,7 +11,7 @@ export const Data: React.FC = () => {
   if (!selectedTable) return <></>;
   const table = database.tables[selectedTable];
   const columnNames = Object.keys(schema);
-  const data = table?.data || [];
+  const data = table?.data ?? [];
   const handleAddNewRow = () => {
     const newRow: any = {};
     columnNames.forEach((columnName) => {

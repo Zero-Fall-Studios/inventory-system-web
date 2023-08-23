@@ -1,6 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/non-nullable-type-assertion-style */
+
 import { createContext, useContext, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import { Database, Schema } from "~/types/database.types";
+import type { Database, Schema } from "~/types/database.types";
 
 export type DatabaseContextProps = {
   database: Database;
@@ -105,7 +109,7 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
     setSelectedTable(tableName);
     setSelectedView("schema");
     if (database.tables[tableName]?.schema) {
-      setSchema(database.tables[tableName]?.schema || {});
+      setSchema(database.tables[tableName]?.schema ?? {});
     }
   };
   const viewData = (tableName: string) => {
@@ -115,8 +119,8 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
 
   const addRow = (data: any) => {
     if (selectedTable) {
-      const schema = database.tables[selectedTable]?.schema || {};
-      const prevData = database.tables[selectedTable]?.data || [];
+      const schema = database.tables[selectedTable]?.schema ?? {};
+      const prevData = database.tables[selectedTable]?.data ?? [];
       const dbCopy = { ...database };
       dbCopy.tables = {
         ...dbCopy.tables,
