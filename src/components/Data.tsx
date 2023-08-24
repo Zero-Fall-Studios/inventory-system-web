@@ -3,8 +3,57 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-empty-function */
+
+import type { ColumnData } from "~/types/database.types";
 import { useDatabase } from "./DatabaseProvider";
 import { JSONInput } from "./JSONInput";
+import { useState } from "react";
+
+const getDefaultValue = ({ column }: { column: ColumnData }) => {
+  if (column?.type === "string") {
+    return "";
+  }
+  if (column?.type === "number") {
+    return 0;
+  }
+  if (column?.type === "boolean") {
+    return false;
+  }
+  if (column?.type === "null") {
+    return null;
+  }
+  if (column?.type === "array") {
+    return [];
+  }
+  if (column?.type === "object") {
+    return {};
+  }
+};
+
+const ColumnInput = ({
+  column,
+  columnName,
+  rowIndex,
+}: {
+  column: ColumnData;
+  columnName: string;
+  rowIndex: number;
+}) => {
+  const { onColumnValueChange, getCurrentValue } = useDatabase();
+  const currentValue = getCurrentValue(rowIndex, columnName);
+  const [value, setValue] = useState(
+    currentValue ?? getDefaultValue({ column })
+  );
+  return (
+    <JSONInput
+      value={value}
+      onChange={(newValue: any) => {
+        setValue(newValue);
+        onColumnValueChange(rowIndex, columnName, newValue);
+      }}
+    />
+  );
+};
 
 export const Data: React.FC = () => {
   const { selectedTable, database, schema, addRow } = useDatabase();
@@ -39,6 +88,7 @@ export const Data: React.FC = () => {
     });
     addRow(newRow);
   };
+
   return (
     <div className="relative overflow-x-auto">
       <table className="w-full ">
@@ -57,50 +107,23 @@ export const Data: React.FC = () => {
               key={rowIndex}
               className="border-b bg-white dark:border-gray-700 "
             >
-              {columnNames.map((columnName) => (
-                <td key={columnName} className="border px-6 py-4">
-                  {(row[columnName] || "").toString()}
-                </td>
-              ))}
+              {columnNames.map((columnName) => {
+                const column = table?.schema[columnName];
+                if (!column)
+                  return <td key={columnName} className="border p-2"></td>;
+                return (
+                  <td key={columnName} className="border p-2">
+                    <ColumnInput
+                      column={column}
+                      columnName={columnName}
+                      rowIndex={rowIndex}
+                    />
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>
-        <tfoot>
-          <tr>
-            {columnNames.map((columnName) => {
-              const column = table?.schema[columnName];
-
-              let field = <></>;
-              if (column?.type === "string") {
-                field = <JSONInput value={""} onChange={() => {}} />;
-              }
-              if (column?.type === "number") {
-                field = <JSONInput value={0} onChange={() => {}} />;
-              }
-              if (column?.type === "boolean") {
-                field = <JSONInput value={false} onChange={() => {}} />;
-              }
-              if (column?.type === "null") {
-                field = <JSONInput value={null} onChange={() => {}} />;
-              }
-              if (column?.type === "array") {
-                field = <JSONInput value={[]} onChange={() => {}} />;
-              }
-              if (column?.type === "object") {
-                field = <JSONInput value={{}} onChange={() => {}} />;
-              }
-
-              return (
-                <td
-                  key={columnName}
-                  className="border-b border-r bg-white p-2 dark:border-gray-700"
-                >
-                  {field}
-                </td>
-              );
-            })}
-          </tr>
-        </tfoot>
       </table>
       <button className="btn-secondary w-full" onClick={handleAddNewRow}>
         Add Row

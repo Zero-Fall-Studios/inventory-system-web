@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/non-nullable-type-assertion-style */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 
 import { createContext, useContext, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
@@ -19,6 +21,13 @@ export type DatabaseContextProps = {
   deleteColumn: (columnName: string) => void;
   onChangeType: (columnName: string, value: string) => void;
   addRow: (data: any) => void;
+  onColumnValueChange: (
+    rowIndex: number,
+    columnName: string,
+    newValue: any
+  ) => void;
+  getCurrentValue: (rowIndex: number, columnName: string) => any;
+  exportData: (tableName: string) => void;
 };
 
 const DatabaseContext = createContext<DatabaseContextProps | null>(null);
@@ -115,6 +124,19 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
   const viewData = (tableName: string) => {
     setSelectedView("data");
     setSelectedTable(tableName);
+    if (database.tables[tableName]?.schema) {
+      setSchema(database.tables[tableName]?.schema ?? {});
+    }
+  };
+  const exportData = (tableName: string) => {
+    const data = database.tables[tableName]?.data ?? [];
+    const jsonString = JSON.stringify(data);
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "data.json";
+    a.click();
   };
 
   const addRow = (data: any) => {
@@ -128,6 +150,32 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
       };
       setDatabase(dbCopy);
     }
+  };
+
+  const onColumnValueChange = (
+    rowIndex: number,
+    columnName: string,
+    newValue: any
+  ) => {
+    if (selectedTable) {
+      const schema = database.tables[selectedTable]?.schema ?? {};
+      const newData = database.tables[selectedTable]?.data ?? [];
+      newData[rowIndex][columnName] = newValue;
+      const dbCopy = { ...database };
+      dbCopy.tables = {
+        ...dbCopy.tables,
+        [selectedTable]: { schema, data: [...newData] },
+      };
+      setDatabase(dbCopy);
+    }
+  };
+
+  const getCurrentValue = (rowIndex: number, columnName: string) => {
+    if (selectedTable) {
+      const newData = database.tables[selectedTable]?.data ?? [];
+      return newData?.[rowIndex]?.[columnName] ?? null;
+    }
+    return null;
   };
 
   return (
@@ -145,6 +193,9 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
         deleteColumn,
         onChangeType,
         addRow,
+        onColumnValueChange,
+        getCurrentValue,
+        exportData,
       }}
     >
       {children}

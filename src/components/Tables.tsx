@@ -1,7 +1,8 @@
 import { useDatabase } from "./DatabaseProvider";
 
 export const Tables: React.FC = () => {
-  const { database, viewSchema, viewData, selectedTable } = useDatabase();
+  const { database, viewSchema, viewData, selectedTable, exportData } =
+    useDatabase();
   return (
     <div>
       <h2 className="dark:text-white">Tables</h2>
@@ -29,6 +30,12 @@ export const Tables: React.FC = () => {
             </button>
             <button className="btn-primary" onClick={() => viewData(tableName)}>
               View Data
+            </button>
+            <button
+              className="btn-primary"
+              onClick={() => exportData(tableName)}
+            >
+              Export
             </button>
           </div>
         </div>
