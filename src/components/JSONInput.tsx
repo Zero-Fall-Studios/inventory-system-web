@@ -1,97 +1,159 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { useState } from "react";
+
 interface StringInputProps {
-  value: string;
+  defaultValue: string;
   onChange: (newValue: string) => void;
 }
 
 export const StringInput: React.FC<StringInputProps> = ({
-  value,
+  defaultValue,
   onChange,
-}) => (
-  <input
-    type="text"
-    value={value}
-    onChange={(event) => onChange(event.target.value)}
-    className="w-full"
-  />
-);
+}) => {
+  const [value, setValue] = useState<string>(defaultValue ?? "");
+  const handleOnChange = (event: any) => {
+    const newValue = event.target.value as string;
+    onChange(newValue);
+    setValue(newValue);
+  };
+  return (
+    <input
+      type="text"
+      value={value}
+      onChange={handleOnChange}
+      className="w-full"
+    />
+  );
+};
 
 interface NumberInputProps {
-  value: number;
+  defaultValue: number;
   onChange: (newValue: number) => void;
 }
 
 export const NumberInput: React.FC<NumberInputProps> = ({
-  value,
+  defaultValue,
   onChange,
-}) => (
-  <input
-    type="number"
-    value={value}
-    onChange={(event) => onChange(Number(event.target.value))}
-    className="w-full"
-  />
-);
+}) => {
+  const [value, setValue] = useState<number>(defaultValue ?? 0);
+  const handleOnChange = (event: any) => {
+    const newValue = Number(event.target.value);
+    onChange(newValue);
+    setValue(newValue);
+  };
+  return (
+    <input
+      type="number"
+      value={value}
+      onChange={handleOnChange}
+      className="w-full"
+    />
+  );
+};
 
 interface BooleanInputProps {
-  value: boolean;
+  defaultValue: boolean;
   onChange: (newValue: boolean) => void;
 }
 
 export const BooleanInput: React.FC<BooleanInputProps> = ({
-  value,
+  defaultValue,
   onChange,
-}) => (
-  <select
-    value={value.toString()}
-    onChange={(event) => onChange(event.target.value === "true")}
-    className="w-full"
-  >
-    <option value="true">true</option>
-    <option value="false">false</option>
-  </select>
-);
+}) => {
+  const [value, setValue] = useState<boolean>(defaultValue ?? false);
+  const handleOnChange = (event: any) => {
+    const newValue = Boolean(event.target.value);
+    onChange(newValue);
+    setValue(newValue);
+  };
+  return (
+    <select
+      value={value.toString()}
+      onChange={handleOnChange}
+      className="w-full"
+    >
+      <option value="true">true</option>
+      <option value="false">false</option>
+    </select>
+  );
+};
 
 const NullInput: React.FC = () => <span>null</span>;
 
-interface ArrayInputProps {
-  value: any[];
-  onChange: (index: number, newValue: any) => void;
+function removeItemAtIndex(arr: string[], index: number) {
+  if (index < 0 || index >= arr.length) {
+    return [];
+  }
+  arr.splice(index, 1);
+  return arr;
 }
 
-export const ArrayInput: React.FC<ArrayInputProps> = ({ value, onChange }) => (
-  <ul>
-    {value.map((item, index) => (
-      <li key={index}>
-        <JSONInput
-          value={item}
-          onChange={(newValue) => onChange(index, newValue)}
-        />
-        <button onClick={() => onChange(index, null)}>Remove</button>
+interface ArrayInputProps {
+  defaultValue: string[];
+  onChange: (newValue: string[]) => void;
+}
+
+export const ArrayInput: React.FC<ArrayInputProps> = ({
+  defaultValue,
+  onChange,
+}) => {
+  const [value, setValue] = useState<string[]>(defaultValue ?? []);
+  const handleOnChange = (index: number, newValue: string | null) => {
+    let newArray = [...value];
+    if (newValue === null) {
+      newArray = removeItemAtIndex(newArray, index);
+    } else {
+      newArray[index] = newValue;
+    }
+    setValue(newArray);
+    onChange(newArray);
+  };
+  return (
+    <ul>
+      {value.map((item, index) => (
+        <li className="flex justify-between" key={`${index}-${item}`}>
+          <JSONInput
+            defaultValue={item}
+            onChange={(newValue) => handleOnChange(index, newValue as string)}
+          />
+          <button
+            className="btn-primary"
+            onClick={() => handleOnChange(index, null)}
+          >
+            Remove
+          </button>
+        </li>
+      ))}
+      <li>
+        <button
+          className="btn-primary"
+          onClick={() => handleOnChange(value.length, "")}
+        >
+          Add
+        </button>
       </li>
-    ))}
-    <li>
-      <button onClick={() => onChange(value.length, "")}>Add Item</button>
-    </li>
-  </ul>
-);
+    </ul>
+  );
+};
 
 interface ObjectInputProps {
-  value: Record<string, any>;
-  onChange: (key: string, newValue: any) => void;
+  defaultValue: Record<string, any>;
+  onChange: (key: any, newValue: any) => void;
 }
 
 export const ObjectInput: React.FC<ObjectInputProps> = ({
-  value,
+  defaultValue,
   onChange,
 }) => (
   <ul>
-    {Object.keys(value).map((key) => (
+    {Object.keys(defaultValue).map((key) => (
       <li key={key}>
         <span>{key}: </span>
         <JSONInput
-          value={value[key]}
+          defaultValue={defaultValue[key]}
           onChange={(newValue) => onChange(key, newValue)}
         />
         <button onClick={() => onChange(key, null)}>Remove</button>
@@ -104,28 +166,31 @@ export const ObjectInput: React.FC<ObjectInputProps> = ({
 );
 
 interface JSONInputProps {
-  value: any;
+  defaultValue: any;
   onChange: (newValue: any) => void;
 }
 
-export const JSONInput: React.FC<JSONInputProps> = ({ value, onChange }) => {
-  if (typeof value === "string") {
-    return <StringInput value={value} onChange={onChange} />;
+export const JSONInput: React.FC<JSONInputProps> = ({
+  defaultValue,
+  onChange,
+}) => {
+  if (typeof defaultValue === "string") {
+    return <StringInput defaultValue={defaultValue} onChange={onChange} />;
   }
-  if (typeof value === "number") {
-    return <NumberInput value={value} onChange={onChange} />;
+  if (typeof defaultValue === "number") {
+    return <NumberInput defaultValue={defaultValue} onChange={onChange} />;
   }
-  if (typeof value === "boolean") {
-    return <BooleanInput value={value} onChange={onChange} />;
+  if (typeof defaultValue === "boolean") {
+    return <BooleanInput defaultValue={defaultValue} onChange={onChange} />;
   }
-  if (value === null) {
+  if (defaultValue === null) {
     return <NullInput />;
   }
-  if (Array.isArray(value)) {
-    return <ArrayInput value={value} onChange={onChange} />;
+  if (Array.isArray(defaultValue)) {
+    return <ArrayInput defaultValue={defaultValue} onChange={onChange} />;
   }
-  if (typeof value === "object") {
-    return <ObjectInput value={value} onChange={onChange} />;
+  if (typeof defaultValue === "object") {
+    return <ObjectInput defaultValue={defaultValue} onChange={onChange} />;
   }
 
   return null;

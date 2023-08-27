@@ -1,7 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+export type ColumnType =
+  | "string"
+  | "number"
+  | "boolean"
+  | "null"
+  | "array"
+  | "object"
+  | "select";
+
+export const possibleColumnTypes: ColumnType[] = [
+  "string",
+  "number",
+  "boolean",
+  "null",
+  "array",
+  "object",
+  "select",
+];
+
 export interface ColumnData {
-  type: string;
+  type: ColumnType;
+  possible_values?: string[];
 }
 
 export type Schema = Record<string, ColumnData>;

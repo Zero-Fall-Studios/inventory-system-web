@@ -5,7 +5,7 @@
 @layer components {
 
     body { 
-        font-size: x-small;
+        font-size: small;
     }
 
     .bg-primary {

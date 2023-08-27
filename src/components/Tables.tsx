@@ -10,7 +10,7 @@ export const Tables: React.FC = () => {
       {Object.keys(database.tables).map((tableName) => (
         <div
           key={tableName}
-          className={`flex justify-between gap-2 py-1 ${
+          className={`flex justify-between gap-2 p-1 ${
             selectedTable === tableName ? "bg-gray-300 " : ""
           }`}
         >

@@ -6,7 +6,7 @@
 
 import { createContext, useContext, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import type { Database, Schema } from "~/types/database.types";
+import type { ColumnType, Database, Schema } from "~/types/database.types";
 
 export type DatabaseContextProps = {
   database: Database;
@@ -20,6 +20,7 @@ export type DatabaseContextProps = {
   addColumn: (columnName: string) => void;
   deleteColumn: (columnName: string) => void;
   onChangeType: (columnName: string, value: string) => void;
+  onChangePossibleValues: (columnName: string, values: string[]) => void;
   addRow: (data: any) => void;
   onColumnValueChange: (
     rowIndex: number,
@@ -101,7 +102,29 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
   const onChangeType = (columnName: string, value: string) => {
     if (schema[columnName]) {
       const newSchema = { ...schema };
-      newSchema[columnName] = { type: value };
+      newSchema[columnName] = {
+        type: value as ColumnType,
+        possible_values: newSchema[columnName]?.possible_values ?? [],
+      };
+      setSchema(newSchema);
+      if (selectedTable) {
+        const dbCopy = { ...database };
+        dbCopy.tables = {
+          ...dbCopy.tables,
+          [selectedTable]: { schema: newSchema, data: [] },
+        };
+        setDatabase(dbCopy);
+      }
+    }
+  };
+
+  const onChangePossibleValues = (columnName: string, values: string[]) => {
+    if (schema[columnName]) {
+      const newSchema = { ...schema };
+      newSchema[columnName] = {
+        type: newSchema[columnName]?.type ?? "null",
+        possible_values: values,
+      };
       setSchema(newSchema);
       if (selectedTable) {
         const dbCopy = { ...database };
@@ -192,6 +215,7 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
         addColumn,
         deleteColumn,
         onChangeType,
+        onChangePossibleValues,
         addRow,
         onColumnValueChange,
         getCurrentValue,
