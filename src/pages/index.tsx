@@ -33,7 +33,7 @@ export default function Page() {
             <section className="bg-content flex-grow">
               <View />
             </section>
-            <aside className="w-1/6  p-2">
+            <aside className="w-52  p-2">
               <JSONTextarea />
             </aside>
           </main>

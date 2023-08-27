@@ -4,6 +4,10 @@
 
 @layer components {
 
+    body { 
+        font-size: x-small;
+    }
+
     .bg-primary {
         @apply bg-white dark:bg-gray-800
     }
