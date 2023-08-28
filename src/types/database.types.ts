@@ -19,9 +19,17 @@ export const possibleColumnTypes: ColumnType[] = [
   "select",
 ];
 
+export const possibleObjectTypes: ColumnType[] = [
+  "string",
+  "number",
+  "boolean",
+  "null",
+];
+
 export interface ColumnData {
   type: ColumnType;
   possible_values?: string[];
+  default_values?: string[];
 }
 
 export type Schema = Record<string, ColumnData>;

@@ -3,7 +3,6 @@ import { AddTable } from "~/components/AddTable";
 import { DatabaseName } from "~/components/DatabaseName";
 import { DatabaseProvider } from "~/components/DatabaseProvider";
 import JSONTextarea from "~/components/JSONTextArea";
-import { ScreenSize } from "~/components/ScreenSize";
 import { Tables } from "~/components/Tables";
 import { View } from "~/components/View";
 
@@ -31,11 +30,10 @@ export default function Page() {
                 <JSONTextarea />
               </aside>
             </div>
-            <section className="bg-content flex-grow">
+            <div>
               <View />
-            </section>
+            </div>
           </main>
-          <ScreenSize />
         </div>
       </DatabaseProvider>
     </>

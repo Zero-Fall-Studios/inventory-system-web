@@ -139,8 +139,17 @@ export const Data: React.FC = () => {
   };
 
   return (
-    <div className="relative overflow-x-auto">
-      <table className="w-full ">
+    <section className="bg-content flex flex-col">
+      <div className="relative">
+        <div className="absolute left-0 right-0 top-0 flex justify-between gap-2 bg-slate-300 p-2 ">
+          <h3>Table: {selectedTable}</h3>
+          <button className="btn-secondary" onClick={handleAddNewRow}>
+            Add Row
+          </button>
+        </div>
+      </div>
+      <div className="h-11"></div>
+      <table>
         <thead className="bg-primary dark:text-white">
           <tr>
             {columnNames.map((columnName) => (
@@ -183,9 +192,6 @@ export const Data: React.FC = () => {
           ))}
         </tbody>
       </table>
-      <button className="btn-secondary w-full" onClick={handleAddNewRow}>
-        Add Row
-      </button>
-    </div>
+    </section>
   );
 };

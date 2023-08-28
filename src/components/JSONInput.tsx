@@ -3,6 +3,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState } from "react";
+import {
+  type ColumnData,
+  type ColumnType,
+  possibleObjectTypes,
+} from "~/types/database.types";
 import { removeItemAtIndex } from "~/utils/removeItemAtIndex";
 
 interface StringInputProps {
@@ -135,31 +140,131 @@ export const ArrayInput: React.FC<ArrayInputProps> = ({
   );
 };
 
+type ObjectPropertyProps = {
+  propertyName: string;
+  defaultType: string;
+  defaultValue: string;
+  handleOnChangeType: (key: string, newValue: string | null) => void;
+  handleOnChangeDefaultValue: (key: string, newValue: string | null) => void;
+};
+
+const ObjectProperty: React.FC<ObjectPropertyProps> = ({
+  propertyName,
+  defaultType,
+  defaultValue,
+  handleOnChangeType,
+  handleOnChangeDefaultValue,
+}) => {
+  const [type, setType] = useState(defaultType ?? "");
+  const [value, setValue] = useState(defaultValue ?? "");
+  return (
+    <li className="flex justify-between gap-2 bg-slate-300 p-1">
+      <span>{propertyName}: </span>
+      <select
+        value={type}
+        onChange={(e) => {
+          setType(e.target.value);
+          handleOnChangeType(propertyName, e.target.value);
+        }}
+      >
+        {possibleObjectTypes.map((type) => (
+          <option key={type} value={type}>
+            {type}
+          </option>
+        ))}
+      </select>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => {
+          const newValue = e.target.value;
+          setValue(newValue);
+          handleOnChangeDefaultValue(propertyName, newValue);
+        }}
+        className="w-full"
+        placeholder="Default Value"
+      />
+      <button
+        className="btn-error"
+        onClick={() => handleOnChangeType(propertyName, null)}
+      >
+        x
+      </button>
+    </li>
+  );
+};
+
 interface ObjectInputProps {
-  defaultValue: Record<string, any>;
-  onChange: (key: any, newValue: any) => void;
+  defaultValue: Record<string, { type: ColumnType; default_values?: string[] }>;
+  onChange: (newValue: any) => void;
 }
 
 export const ObjectInput: React.FC<ObjectInputProps> = ({
   defaultValue,
   onChange,
-}) => (
-  <ul>
-    {Object.keys(defaultValue).map((key) => (
-      <li key={key}>
-        <span>{key}: </span>
-        <JSONInput
-          defaultValue={defaultValue[key]}
-          onChange={(newValue) => onChange(key, newValue)}
+}) => {
+  const [value, setValue] = useState(defaultValue ?? {});
+  const handleOnChangeType = (key: string, newValue: string | null) => {
+    const newObj = { ...value };
+    if (newValue === null) {
+      delete newObj[key];
+    } else {
+      newObj[key] = {
+        ...newObj[key],
+        type: newValue as ColumnType,
+      } as ColumnData;
+    }
+    setValue(newObj);
+    onChange(newObj);
+  };
+  const handleOnChangeDefaultValue = (key: string, newValue: string | null) => {
+    const newObj = { ...value };
+    if (newValue === null) {
+      delete newObj[key];
+    } else {
+      newObj[key] = {
+        ...newObj[key],
+        default_values: [newValue],
+      } as ColumnData;
+    }
+    setValue(newObj);
+    onChange(newObj);
+  };
+  const [newKey, setNewKey] = useState("");
+  return (
+    <ul>
+      {Object.keys(defaultValue).map((key, index) => (
+        <ObjectProperty
+          key={`${index}-${key}`}
+          propertyName={key}
+          defaultType={defaultValue[key]?.type ?? "string"}
+          defaultValue={defaultValue[key]?.default_values?.[0] ?? ""}
+          handleOnChangeType={handleOnChangeType}
+          handleOnChangeDefaultValue={handleOnChangeDefaultValue}
         />
-        <button onClick={() => onChange(key, null)}>Remove</button>
+      ))}
+      <li className="flex justify-end gap-2">
+        <input
+          type="text"
+          value={newKey}
+          onChange={(e) => setNewKey(e.target.value)}
+          className="w-full"
+          placeholder="New Key"
+        />
+        <button
+          className="btn-secondary"
+          onClick={() => {
+            handleOnChangeType(newKey, "string");
+            setNewKey("");
+          }}
+          disabled={!newKey}
+        >
+          +
+        </button>
       </li>
-    ))}
-    <li>
-      <button onClick={() => onChange("", "")}>Add Property</button>
-    </li>
-  </ul>
-);
+    </ul>
+  );
+};
 
 interface JSONInputProps {
   defaultValue: any;
@@ -188,6 +293,5 @@ export const JSONInput: React.FC<JSONInputProps> = ({
   if (typeof defaultValue === "object") {
     return <ObjectInput defaultValue={defaultValue} onChange={onChange} />;
   }
-
   return null;
 };

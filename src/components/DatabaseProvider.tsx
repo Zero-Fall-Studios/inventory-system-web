@@ -6,7 +6,13 @@
 
 import { createContext, useContext, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import type { ColumnType, Database, Row, Schema } from "~/types/database.types";
+import type {
+  ColumnData,
+  ColumnType,
+  Database,
+  Row,
+  Schema,
+} from "~/types/database.types";
 import { removeItemAtIndex } from "~/utils/removeItemAtIndex";
 
 export type DatabaseContextProps = {
@@ -22,6 +28,7 @@ export type DatabaseContextProps = {
   deleteColumn: (columnName: string) => void;
   onChangeType: (columnName: string, value: string) => void;
   onChangePossibleValues: (columnName: string, values: string[]) => void;
+  onChangeDefaultValues: (columnName: string, values: string[]) => void;
   addRow: (data: any) => void;
   onColumnValueChange: (
     rowIndex: number,
@@ -139,6 +146,25 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
     }
   };
 
+  const onChangeDefaultValues = (columnName: string, values: string[]) => {
+    if (schema[columnName]) {
+      const newSchema = { ...schema };
+      newSchema[columnName] = {
+        ...newSchema[columnName],
+        default_values: values,
+      } as ColumnData;
+      setSchema(newSchema);
+      if (selectedTable) {
+        const dbCopy = { ...database };
+        dbCopy.tables = {
+          ...dbCopy.tables,
+          [selectedTable]: { schema: newSchema, data: [] },
+        };
+        setDatabase(dbCopy);
+      }
+    }
+  };
+
   const viewSchema = (tableName: string) => {
     setSelectedTable(tableName);
     setSelectedView("schema");
@@ -235,6 +261,7 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
         deleteColumn,
         onChangeType,
         onChangePossibleValues,
+        onChangeDefaultValues,
         addRow,
         onColumnValueChange,
         getCurrentValue,

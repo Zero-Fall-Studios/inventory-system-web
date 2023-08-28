@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+
 import { possibleColumnTypes, type ColumnData } from "~/types/database.types";
 import { AddColumn } from "./AddColumn";
 import { useDatabase } from "./DatabaseProvider";
@@ -14,8 +16,11 @@ type SelectPossibleValuesInputProps = {
 const SelectPossibleValuesInput: React.FC<SelectPossibleValuesInputProps> = ({
   columnName,
 }) => {
-  const { onChangePossibleValues } = useDatabase();
-  const [value, setValue] = useState<string[]>([]);
+  const { onChangePossibleValues, selectedTable, database } = useDatabase();
+  const table = database?.tables[selectedTable];
+  const schema = table?.schema ?? {};
+  const column = (schema[columnName] ?? {}) as ColumnData;
+  const [value, setValue] = useState<string[]>(column?.possible_values ?? []);
   return (
     <JSONInput
       defaultValue={value}
@@ -23,6 +28,54 @@ const SelectPossibleValuesInput: React.FC<SelectPossibleValuesInputProps> = ({
         setValue(newValue);
         onChangePossibleValues(columnName, newValue);
       }}
+    />
+  );
+};
+
+type ObjectShapeInputProps = {
+  columnName: string;
+};
+
+const ObjectShapeInput: React.FC<ObjectShapeInputProps> = ({ columnName }) => {
+  const { onChangePossibleValues, selectedTable, database } = useDatabase();
+  const table = database?.tables[selectedTable];
+  const schema = table?.schema ?? {};
+  const column = (schema[columnName] ?? {}) as ColumnData;
+  const [value, setValue] = useState(column?.possible_values ?? {});
+  return (
+    <JSONInput
+      defaultValue={value}
+      onChange={(newValue) => {
+        setValue(newValue);
+        onChangePossibleValues(columnName, newValue);
+      }}
+    />
+  );
+};
+
+type DefaultValueInputProps = {
+  columnName: string;
+};
+
+const DefaultValueInput: React.FC<DefaultValueInputProps> = ({
+  columnName,
+}) => {
+  const { onChangeDefaultValues, selectedTable, database } = useDatabase();
+  const table = database?.tables[selectedTable];
+  const schema = table?.schema ?? {};
+  const column = (schema[columnName] ?? {}) as ColumnData;
+  const [value, setValue] = useState<string>(column?.default_values?.[0] ?? "");
+  return (
+    <input
+      type="text"
+      value={value}
+      onChange={(e) => {
+        const newValue = e.target.value;
+        setValue(newValue);
+        onChangeDefaultValues(columnName, [newValue]);
+      }}
+      className="w-full"
+      placeholder="Default Value"
     />
   );
 };
@@ -52,6 +105,10 @@ const Column: React.FC<ColumnProps> = ({ column, columnName }) => {
         {type === "select" && (
           <SelectPossibleValuesInput columnName={columnName} />
         )}
+        {type === "object" && <ObjectShapeInput columnName={columnName} />}
+        {type !== "select" && type !== "object" && (
+          <DefaultValueInput columnName={columnName} />
+        )}
       </div>
       <button className="btn-error" onClick={() => deleteColumn(columnName)}>
         X
@@ -68,11 +125,6 @@ export const Schema: React.FC = () => {
       <div>
         <div className="flex flex-col gap-2">
           <div className="bg-slate-200">
-            <div className="flex gap-2 border-b border-gray-400 p-2">
-              <div className="flex-grow">
-                <label>Column Name: </label>
-              </div>
-            </div>
             {Object.keys(schema).map((columnName, index) => {
               const column = schema[columnName]!;
               return (
