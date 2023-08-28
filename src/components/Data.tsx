@@ -3,11 +3,45 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 
-import type { ColumnData } from "~/types/database.types";
+import type { ColumnData, Row } from "~/types/database.types";
 import { useDatabase } from "./DatabaseProvider";
 import { JSONInput } from "./JSONInput";
 import { useState } from "react";
+import { createId } from "@paralleldrive/cuid2";
+
+type SelectPossibleValuesInputProps = {
+  rowIndex: number;
+  column: ColumnData;
+  columnName: string;
+};
+
+const SelectPossibleValuesInput: React.FC<SelectPossibleValuesInputProps> = ({
+  rowIndex,
+  column,
+  columnName,
+}) => {
+  const { onColumnValueChange, getCurrentValue } = useDatabase();
+  const currentValue = getCurrentValue(rowIndex, columnName);
+  const [value, setValue] = useState<string>(
+    currentValue ?? getDefaultValue({ column }) ?? ""
+  );
+  const handleOnChange = (e: any) => {
+    const newValue = e.target.value;
+    setValue(newValue);
+    onColumnValueChange(rowIndex, columnName, newValue);
+  };
+  return (
+    <select value={value} onChange={handleOnChange}>
+      {column?.possible_values?.map((type) => (
+        <option key={type} value={type}>
+          {type}
+        </option>
+      ))}
+    </select>
+  );
+};
 
 const getDefaultValue = ({ column }: { column: ColumnData }) => {
   if (column?.type === "string") {
@@ -44,9 +78,18 @@ const ColumnInput = ({
   const [value, setValue] = useState(
     currentValue ?? getDefaultValue({ column })
   );
+  if (column.type === "select") {
+    return (
+      <SelectPossibleValuesInput
+        rowIndex={rowIndex}
+        column={column}
+        columnName={columnName}
+      />
+    );
+  }
   return (
     <JSONInput
-      value={value}
+      defaultValue={value}
       onChange={(newValue: any) => {
         setValue(newValue);
         onColumnValueChange(rowIndex, columnName, newValue);
@@ -56,14 +99,17 @@ const ColumnInput = ({
 };
 
 export const Data: React.FC = () => {
-  const { selectedTable, database, schema, addRow } = useDatabase();
+  const { selectedTable, database, schema, addRow, deleteRow } = useDatabase();
   if (!selectedTable) return <></>;
   const table = database.tables[selectedTable];
   const columnNames = Object.keys(schema);
   const data = table?.data ?? [];
   const handleAddNewRow = () => {
-    const newRow: any = {};
+    const newRow: Row = {
+      id: createId(),
+    };
     columnNames.forEach((columnName) => {
+      if (columnName === "id") return;
       const column = table?.schema[columnName];
       let field = null;
       if (column?.type === "string") {
@@ -88,6 +134,9 @@ export const Data: React.FC = () => {
     });
     addRow(newRow);
   };
+  const handleDeleteRow = (index: number) => {
+    deleteRow(index);
+  };
 
   return (
     <div className="relative overflow-x-auto">
@@ -99,12 +148,13 @@ export const Data: React.FC = () => {
                 {columnName}
               </th>
             ))}
+            <th className="px-6 py-3">actions</th>
           </tr>
         </thead>
         <tbody>
-          {data.map((row: any, rowIndex: number) => (
+          {data.map((row: Row, rowIndex: number) => (
             <tr
-              key={rowIndex}
+              key={row.id}
               className="border-b bg-white dark:border-gray-700 "
             >
               {columnNames.map((columnName) => {
@@ -121,6 +171,14 @@ export const Data: React.FC = () => {
                   </td>
                 );
               })}
+              <td className="border p-2">
+                <button
+                  className="btn-error w-full"
+                  onClick={() => handleDeleteRow(rowIndex)}
+                >
+                  X
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

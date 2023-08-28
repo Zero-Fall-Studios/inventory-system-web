@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  type ColumnType,
-  possibleColumnTypes,
-  type ColumnData,
-} from "~/types/database.types";
+import { possibleColumnTypes, type ColumnData } from "~/types/database.types";
 import { AddColumn } from "./AddColumn";
 import { useDatabase } from "./DatabaseProvider";
 import { JSONInput } from "./JSONInput";
@@ -57,8 +53,8 @@ const Column: React.FC<ColumnProps> = ({ column, columnName }) => {
           <SelectPossibleValuesInput columnName={columnName} />
         )}
       </div>
-      <button className="btn-primary" onClick={() => deleteColumn(columnName)}>
-        Delete
+      <button className="btn-error" onClick={() => deleteColumn(columnName)}>
+        X
       </button>
     </div>
   );

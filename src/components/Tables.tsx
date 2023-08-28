@@ -10,7 +10,7 @@ export const Tables: React.FC = () => {
       {Object.keys(database.tables).map((tableName) => (
         <div
           key={tableName}
-          className={`flex justify-between gap-2 p-1 ${
+          className={`flex justify-between gap-2 p-2 sm:flex-col ${
             selectedTable === tableName ? "bg-gray-300 " : ""
           }`}
         >
@@ -26,10 +26,10 @@ export const Tables: React.FC = () => {
               className="btn-primary"
               onClick={() => viewSchema(tableName)}
             >
-              View Schema
+              Schema
             </button>
             <button className="btn-primary" onClick={() => viewData(tableName)}>
-              View Data
+              Data
             </button>
             <button
               className="btn-primary"

@@ -14,10 +14,10 @@ export const AddTable: React.FC = () => {
         className="flex-grow"
         value={tableName}
         onChange={(e) => setTableName(e.target.value)}
-        placeholder="Table Name"
+        placeholder="New Table Name"
       />
-      <button className="btn-primary" onClick={handleSubmit}>
-        Add Table
+      <button className="btn-secondary" onClick={handleSubmit}>
+        +
       </button>
     </div>
   );

@@ -26,9 +26,13 @@ export interface ColumnData {
 
 export type Schema = Record<string, ColumnData>;
 
+export type Row = {
+  id: string;
+  [key: string]: any;
+};
 export interface Table {
   schema: Schema;
-  data: any[];
+  data: Row[];
 }
 
 export interface Database {

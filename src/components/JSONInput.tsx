@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState } from "react";
+import { removeItemAtIndex } from "~/utils/removeItemAtIndex";
 
 interface StringInputProps {
   defaultValue: string;
@@ -83,14 +84,6 @@ export const BooleanInput: React.FC<BooleanInputProps> = ({
 
 const NullInput: React.FC = () => <span>null</span>;
 
-function removeItemAtIndex(arr: string[], index: number) {
-  if (index < 0 || index >= arr.length) {
-    return [];
-  }
-  arr.splice(index, 1);
-  return arr;
-}
-
 interface ArrayInputProps {
   defaultValue: string[];
   onChange: (newValue: string[]) => void;
@@ -114,25 +107,28 @@ export const ArrayInput: React.FC<ArrayInputProps> = ({
   return (
     <ul>
       {value.map((item, index) => (
-        <li className="flex justify-between" key={`${index}-${item}`}>
+        <li
+          className="flex justify-between gap-2 pb-2"
+          key={`${index}-${item}`}
+        >
           <JSONInput
             defaultValue={item}
             onChange={(newValue) => handleOnChange(index, newValue as string)}
           />
           <button
-            className="btn-primary"
+            className="btn-error"
             onClick={() => handleOnChange(index, null)}
           >
             Remove
           </button>
         </li>
       ))}
-      <li>
+      <li className="flex justify-end">
         <button
-          className="btn-primary"
+          className="btn-secondary"
           onClick={() => handleOnChange(value.length, "")}
         >
-          Add
+          +
         </button>
       </li>
     </ul>

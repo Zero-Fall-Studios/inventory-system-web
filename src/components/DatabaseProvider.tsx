@@ -6,7 +6,8 @@
 
 import { createContext, useContext, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import type { ColumnType, Database, Schema } from "~/types/database.types";
+import type { ColumnType, Database, Row, Schema } from "~/types/database.types";
+import { removeItemAtIndex } from "~/utils/removeItemAtIndex";
 
 export type DatabaseContextProps = {
   database: Database;
@@ -29,6 +30,7 @@ export type DatabaseContextProps = {
   ) => void;
   getCurrentValue: (rowIndex: number, columnName: string) => any;
   exportData: (tableName: string) => void;
+  deleteRow: (index: number) => void;
 };
 
 const DatabaseContext = createContext<DatabaseContextProps | null>(null);
@@ -103,8 +105,8 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
     if (schema[columnName]) {
       const newSchema = { ...schema };
       newSchema[columnName] = {
+        ...newSchema[columnName],
         type: value as ColumnType,
-        possible_values: newSchema[columnName]?.possible_values ?? [],
       };
       setSchema(newSchema);
       if (selectedTable) {
@@ -175,6 +177,20 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
     }
   };
 
+  const deleteRow = (index: number) => {
+    if (selectedTable) {
+      const schema = database.tables[selectedTable]?.schema ?? {};
+      let prevData = database.tables[selectedTable]?.data ?? [];
+      const dbCopy = { ...database };
+      prevData = removeItemAtIndex(prevData, index);
+      dbCopy.tables = {
+        ...dbCopy.tables,
+        [selectedTable]: { schema, data: [...prevData] },
+      };
+      setDatabase(dbCopy);
+    }
+  };
+
   const onColumnValueChange = (
     rowIndex: number,
     columnName: string,
@@ -183,7 +199,10 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
     if (selectedTable) {
       const schema = database.tables[selectedTable]?.schema ?? {};
       const newData = database.tables[selectedTable]?.data ?? [];
-      newData[rowIndex][columnName] = newValue;
+      newData[rowIndex] = {
+        ...newData[rowIndex],
+        [columnName]: newValue,
+      } as Row;
       const dbCopy = { ...database };
       dbCopy.tables = {
         ...dbCopy.tables,
@@ -220,6 +239,7 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
         onColumnValueChange,
         getCurrentValue,
         exportData,
+        deleteRow,
       }}
     >
       {children}

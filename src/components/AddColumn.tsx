@@ -14,14 +14,14 @@ export const AddColumn: React.FC = () => {
         className="flex-grow"
         value={columnName}
         onChange={(e) => setColumnName(e.target.value)}
-        placeholder="Column Name"
+        placeholder="New Column Name"
       />
       <button
-        className="btn-primary"
+        className="btn-secondary"
         onClick={handleSubmit}
         disabled={!columnName.length}
       >
-        Add Column
+        +
       </button>
     </div>
   );
