@@ -1,69 +1,69 @@
-type ItemType = "MeleeWeapon" | "RangedWeapon" | "Armor" | "Consumable";
+// type ItemType = "MeleeWeapon" | "RangedWeapon" | "Armor" | "Consumable";
 
-type Texture = {
-  src: string;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-};
+// type Texture = {
+//   src: string;
+//   x: number;
+//   y: number;
+//   w: number;
+//   h: number;
+// };
 
-type CharacterModifiers = {
-  xp?: number;
-  hp?: number;
-  mp?: number;
-  gp?: number;
-};
+// type CharacterModifiers = {
+//   xp?: number;
+//   hp?: number;
+//   mp?: number;
+//   gp?: number;
+// };
 
-type SkillModifiers = {
-  strength?: number;
-  dexterity?: number;
-  constitution?: number;
-  intelligence?: number;
-  wisdom?: number;
-  charisma?: number;
-};
+// type SkillModifiers = {
+//   strength?: number;
+//   dexterity?: number;
+//   constitution?: number;
+//   intelligence?: number;
+//   wisdom?: number;
+//   charisma?: number;
+// };
 
-type DamageModifiers = {
-  fire?: number;
-  acid?: number;
-  lightning?: number;
-  ice?: number;
-};
+// type DamageModifiers = {
+//   fire?: number;
+//   acid?: number;
+//   lightning?: number;
+//   ice?: number;
+// };
 
-type Item = {
-  id: string;
-  name: string;
-  type: ItemType;
-  texture: Texture;
-  is_unique: boolean;
-  stack_amount: number;
-  quantity: number;
-  armor_class?: number;
-  weight?: number;
-  cost?: number;
-  required_proficiencies?: SkillModifiers;
-  crit_percent?: number;
-  melee_damage?: number;
-  fire_rate?: number;
-  clip_amount?: number;
-  ammo?: number;
-  charged_amount?: number;
-  duration_until_charged?: number;
-  recharge_rate?: number;
-  recharge_amount?: number;
-  fire_when_charged?: boolean;
-  fire_when_button_released?: boolean;
-  cooldown_when_no_charge?: number;
-  fire_cost?: number;
-  consume_on_pickup?: boolean;
-  consumable_buff_duration?: number;
-  consumable_buff_cooldown?: number;
-  character_modifiers?: CharacterModifiers;
-  skill_modifiers?: SkillModifiers;
-  damage_modifiers?: DamageModifiers;
-  in_inventory_modifiers?: CharacterModifiers;
-};
+// type Item = {
+//   id: string;
+//   name: string;
+//   type: ItemType;
+//   texture: Texture;
+//   is_unique: boolean;
+//   stack_amount: number;
+//   quantity: number;
+//   armor_class?: number;
+//   weight?: number;
+//   cost?: number;
+//   required_proficiencies?: SkillModifiers;
+//   crit_percent?: number;
+//   melee_damage?: number;
+//   fire_rate?: number;
+//   clip_amount?: number;
+//   ammo?: number;
+//   charged_amount?: number;
+//   duration_until_charged?: number;
+//   recharge_rate?: number;
+//   recharge_amount?: number;
+//   fire_when_charged?: boolean;
+//   fire_when_button_released?: boolean;
+//   cooldown_when_no_charge?: number;
+//   fire_cost?: number;
+//   consume_on_pickup?: boolean;
+//   consumable_buff_duration?: number;
+//   consumable_buff_cooldown?: number;
+//   character_modifiers?: CharacterModifiers;
+//   skill_modifiers?: SkillModifiers;
+//   damage_modifiers?: DamageModifiers;
+//   in_inventory_modifiers?: CharacterModifiers;
+// };
 
 // ARMOR EXAMPLE
 

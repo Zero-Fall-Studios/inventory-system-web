@@ -139,7 +139,7 @@ export const Data: React.FC = () => {
   };
 
   return (
-    <section className="bg-content flex flex-col">
+    <>
       <div className="relative">
         <div className="absolute left-0 right-0 top-0 flex justify-between gap-2 bg-slate-300 p-2 ">
           <h3>Table: {selectedTable}</h3>
@@ -148,50 +148,52 @@ export const Data: React.FC = () => {
           </button>
         </div>
       </div>
-      <div className="h-11"></div>
-      <table>
-        <thead className="bg-primary dark:text-white">
-          <tr>
-            {columnNames.map((columnName) => (
-              <th key={columnName} className="px-6 py-3">
-                {columnName}
-              </th>
-            ))}
-            <th className="px-6 py-3">actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((row: Row, rowIndex: number) => (
-            <tr
-              key={row.id}
-              className="border-b bg-white dark:border-gray-700 "
-            >
-              {columnNames.map((columnName) => {
-                const column = table?.schema[columnName];
-                if (!column)
-                  return <td key={columnName} className="border p-2"></td>;
-                return (
-                  <td key={columnName} className="border p-2">
-                    <ColumnInput
-                      column={column}
-                      columnName={columnName}
-                      rowIndex={rowIndex}
-                    />
-                  </td>
-                );
-              })}
-              <td className="border p-2">
-                <button
-                  className="btn-error w-full"
-                  onClick={() => handleDeleteRow(rowIndex)}
-                >
-                  X
-                </button>
-              </td>
+      <div className="flex max-w-screen-lg flex-col">
+        <div className="h-11"></div>
+        <table>
+          <thead className="bg-primary dark:text-white">
+            <tr>
+              {columnNames.map((columnName) => (
+                <th key={columnName} className="px-6 py-3">
+                  {columnName}
+                </th>
+              ))}
+              <th className="px-6 py-3">actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </section>
+          </thead>
+          <tbody>
+            {data.map((row: Row, rowIndex: number) => (
+              <tr
+                key={row.id}
+                className="border-b bg-white dark:border-gray-700 "
+              >
+                {columnNames.map((columnName) => {
+                  const column = table?.schema[columnName];
+                  if (!column)
+                    return <td key={columnName} className="border p-2"></td>;
+                  return (
+                    <td key={columnName} className="border p-2">
+                      <ColumnInput
+                        column={column}
+                        columnName={columnName}
+                        rowIndex={rowIndex}
+                      />
+                    </td>
+                  );
+                })}
+                <td className="border p-2">
+                  <button
+                    className="btn-error w-full"
+                    onClick={() => handleDeleteRow(rowIndex)}
+                  >
+                    X
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 };

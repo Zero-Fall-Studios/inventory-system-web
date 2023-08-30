@@ -6,6 +6,24 @@ import JSONTextarea from "~/components/JSONTextArea";
 import { Tables } from "~/components/Tables";
 import { View } from "~/components/View";
 
+const LeftColumn = () => {
+  return (
+    <>
+      <Tables />
+      <AddTable />
+      <JSONTextarea />
+    </>
+  );
+};
+
+const RightColumn = () => {
+  return (
+    <>
+      <View />
+    </>
+  );
+};
+
 export default function Page() {
   const [domLoaded, setDomLoaded] = useState(false);
 
@@ -18,21 +36,17 @@ export default function Page() {
   return (
     <>
       <DatabaseProvider>
-        <div className="flex h-screen flex-col">
+        <div className="flex min-h-screen flex-col">
           <header className="bg-primary p-2">
             <DatabaseName />
           </header>
-          <main className="bg-secondary flex flex-grow gap-1">
-            <div className="flex w-52 flex-col gap-2 p-2">
-              <Tables />
-              <AddTable />
-              <aside className="flex-grow">
-                <JSONTextarea />
-              </aside>
-            </div>
-            <div>
-              <View />
-            </div>
+          <main className="flex flex-grow flex-col md:flex-row">
+            <section className="w-screen-sm flex flex-col space-y-2 overflow-auto bg-slate-500 p-2">
+              <LeftColumn />
+            </section>
+            <section className="flex-grow overflow-auto bg-slate-700">
+              <RightColumn />
+            </section>
           </main>
         </div>
       </DatabaseProvider>

@@ -4,8 +4,12 @@
 
 @layer components {
 
-    body { 
-        font-size: small;
+    html, body { 
+        @apply w-full h-full;
+    }
+
+    div#__next {
+        @apply w-full h-full;
     }
 
     .bg-primary {

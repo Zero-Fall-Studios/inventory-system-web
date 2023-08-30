@@ -5,8 +5,6 @@ export const Tables: React.FC = () => {
     useDatabase();
   return (
     <div>
-      <h2 className="dark:text-white">Tables</h2>
-      <hr />
       {Object.keys(database.tables).map((tableName) => (
         <div
           key={tableName}
