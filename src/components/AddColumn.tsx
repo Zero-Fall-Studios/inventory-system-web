@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type KeyboardEvent } from "react";
 import { useDatabase } from "./DatabaseProvider";
 
 export const AddColumn: React.FC = () => {
@@ -8,6 +8,11 @@ export const AddColumn: React.FC = () => {
     addColumn(columnName);
     setColumnName("");
   };
+  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSubmit();
+    }
+  };
   return (
     <div className="flex justify-between gap-2 bg-stone-400 p-2">
       <input
@@ -15,6 +20,7 @@ export const AddColumn: React.FC = () => {
         value={columnName}
         onChange={(e) => setColumnName(e.target.value)}
         placeholder="New Column Name"
+        onKeyPress={handleKeyPress}
       />
       <button
         className="btn-secondary"

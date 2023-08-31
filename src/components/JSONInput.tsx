@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useState } from "react";
+import { useState, type KeyboardEvent } from "react";
 import {
   type ColumnData,
   type ColumnType,
@@ -231,6 +231,17 @@ export const ObjectInput: React.FC<ObjectInputProps> = ({
     onChange(newObj);
   };
   const [newKey, setNewKey] = useState("");
+  const handleSubmit = () => {
+    if (newKey) {
+      handleOnChangeType(newKey, "string");
+      setNewKey("");
+    }
+  };
+  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSubmit();
+    }
+  };
   return (
     <ul>
       {Object.keys(defaultValue).map((key, index) => (
@@ -250,13 +261,11 @@ export const ObjectInput: React.FC<ObjectInputProps> = ({
           onChange={(e) => setNewKey(e.target.value)}
           className="w-full"
           placeholder="New Key"
+          onKeyPress={handleKeyPress}
         />
         <button
           className="btn-secondary"
-          onClick={() => {
-            handleOnChangeType(newKey, "string");
-            setNewKey("");
-          }}
+          onClick={handleSubmit}
           disabled={!newKey}
         >
           +
