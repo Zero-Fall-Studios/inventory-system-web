@@ -100,7 +100,7 @@ const ColumnInput = ({
 
 export const Data: React.FC = () => {
   const { selectedTable, database, schema, addRow, deleteRow } = useDatabase();
-  if (!selectedTable) return <></>;
+
   const table = database.tables[selectedTable];
   const columnNames = Object.keys(schema);
   const data = table?.data ?? [];
@@ -145,15 +145,12 @@ export const Data: React.FC = () => {
     const resizeObserver = new ResizeObserver((event) => {
       // Depending on the layout, you may need to swap inlineSize with blockSize
       // https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry/contentBoxSize
-      if (event[0] && event[0].contentBoxSize[0]) {
-        setWidth(event[0].contentBoxSize[0].inlineSize - 10);
-      }
+      setWidth((event?.[0]?.contentBoxSize?.[0]?.inlineSize ?? 0) - 10);
     });
-
-    if (demoRef && demoRef.current) {
-      resizeObserver.observe(demoRef.current);
-    }
+    resizeObserver.observe(demoRef?.current);
   }, [demoRef]);
+
+  if (!selectedTable) return <></>;
 
   return (
     <div
