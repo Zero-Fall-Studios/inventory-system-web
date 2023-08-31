@@ -8,8 +8,8 @@ export const Tables: React.FC = () => {
       {Object.keys(database.tables).map((tableName) => (
         <div
           key={tableName}
-          className={`flex justify-between gap-2 p-2 sm:flex-col ${
-            selectedTable === tableName ? "bg-slate-300 " : ""
+          className={`flex justify-between gap-2 p-2 ${
+            selectedTable === tableName ? "bg-slate-300" : ""
           }`}
         >
           <h3

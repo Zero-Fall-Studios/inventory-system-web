@@ -120,22 +120,16 @@ const Column: React.FC<ColumnProps> = ({ column, columnName }) => {
 export const Schema: React.FC = () => {
   const { selectedTable, schema } = useDatabase();
   return (
-    <div>
+    <div className="flex flex-grow flex-col justify-between gap-2">
       <h3 className="p-2 text-white">Table: {selectedTable}</h3>
+      <div className="h-0 flex-grow overflow-auto bg-slate-300">
+        {Object.keys(schema).map((columnName, index) => {
+          const column = schema[columnName]!;
+          return <Column key={index} column={column} columnName={columnName} />;
+        })}
+      </div>
       <div>
-        <div className="flex flex-col gap-2">
-          <div className="bg-slate-300">
-            {Object.keys(schema).map((columnName, index) => {
-              const column = schema[columnName]!;
-              return (
-                <Column key={index} column={column} columnName={columnName} />
-              );
-            })}
-          </div>
-          <div>
-            <AddColumn />
-          </div>
-        </div>
+        <AddColumn />
       </div>
     </div>
   );

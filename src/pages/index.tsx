@@ -40,11 +40,11 @@ export default function Page() {
           <header className="bg-primary p-2">
             <DatabaseName />
           </header>
-          <main className="bg-content flex flex-grow flex-col md:flex-row">
-            <section className="w-screen-sm flex flex-col space-y-2 overflow-auto p-2">
+          <main className="flex flex-grow flex-col md:flex-row">
+            <section className="w-screen-sm flex flex-col space-y-2 bg-slate-700 p-2">
               <LeftColumn />
             </section>
-            <section className="flex-grow overflow-auto">
+            <section className="bg-content flex flex-grow items-stretch">
               <RightColumn />
             </section>
           </main>

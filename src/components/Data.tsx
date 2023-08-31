@@ -8,7 +8,7 @@
 import type { ColumnData, Row } from "~/types/database.types";
 import { useDatabase } from "./DatabaseProvider";
 import { JSONInput } from "./JSONInput";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createId } from "@paralleldrive/cuid2";
 
 type SelectPossibleValuesInputProps = {
@@ -138,18 +138,38 @@ export const Data: React.FC = () => {
     deleteRow(index);
   };
 
+  const [width, setWidth] = useState(100);
+  const demoRef = useRef<any>();
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver((event) => {
+      // Depending on the layout, you may need to swap inlineSize with blockSize
+      // https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry/contentBoxSize
+      if (event[0] && event[0].contentBoxSize[0]) {
+        setWidth(event[0].contentBoxSize[0].inlineSize - 10);
+      }
+    });
+
+    if (demoRef && demoRef.current) {
+      resizeObserver.observe(demoRef.current);
+    }
+  }, [demoRef]);
+
   return (
-    <>
-      <div className="relative">
-        <div className="absolute left-0 right-0 top-0 flex justify-between gap-2 p-2 ">
-          <h3 className="text-white">Table: {selectedTable}</h3>
-          <button className="btn-secondary" onClick={handleAddNewRow}>
-            Add Row
-          </button>
-        </div>
+    <div
+      ref={demoRef}
+      className="flex flex-grow flex-col justify-between gap-2"
+    >
+      <div className="flex justify-between gap-2 p-2">
+        <h3 className="text-white">Table: {selectedTable}</h3>
+        <button className="btn-secondary" onClick={handleAddNewRow}>
+          Add Row
+        </button>
       </div>
-      <div className="flex max-w-screen-lg flex-col">
-        <div className="h-11"></div>
+      <div
+        className="h-0 flex-grow overflow-auto bg-slate-300"
+        style={{ width }}
+      >
         <table>
           <thead className="bg-primary dark:text-white">
             <tr>
@@ -183,7 +203,7 @@ export const Data: React.FC = () => {
                 })}
                 <td className="border p-2">
                   <button
-                    className="btn-error w-full"
+                    className="btn-error"
                     onClick={() => handleDeleteRow(rowIndex)}
                   >
                     X
@@ -194,6 +214,6 @@ export const Data: React.FC = () => {
           </tbody>
         </table>
       </div>
-    </>
+    </div>
   );
 };

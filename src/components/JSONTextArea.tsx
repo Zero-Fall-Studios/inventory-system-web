@@ -7,7 +7,7 @@ const JSONTextarea: React.FC = () => {
     <textarea
       readOnly
       value={JSON.stringify(database, null, 2)}
-      className="h-full w-full"
+      className="hidden h-full w-full md:block"
     />
   );
 };
