@@ -113,22 +113,22 @@ export const Data: React.FC = () => {
       const column = table?.schema[columnName];
       let field = null;
       if (column?.type === "string") {
-        field = "";
+        field = column?.default_values?.[0] ?? "";
       }
       if (column?.type === "number") {
-        field = 0;
+        field = column?.default_values?.[0] ?? 0;
       }
       if (column?.type === "boolean") {
-        field = false;
+        field = column?.default_values?.[0] ?? false;
       }
       if (column?.type === "null") {
-        field = null;
+        field = column?.default_values?.[0] ?? null;
       }
       if (column?.type === "array") {
-        field = [];
+        field = column?.possible_values ?? [];
       }
       if (column?.type === "object") {
-        field = {};
+        field = column?.possible_values ?? {};
       }
       newRow[columnName] = field;
     });
@@ -141,8 +141,8 @@ export const Data: React.FC = () => {
   return (
     <>
       <div className="relative">
-        <div className="absolute left-0 right-0 top-0 flex justify-between gap-2 bg-slate-300 p-2 ">
-          <h3>Table: {selectedTable}</h3>
+        <div className="absolute left-0 right-0 top-0 flex justify-between gap-2 p-2 ">
+          <h3 className="text-white">Table: {selectedTable}</h3>
           <button className="btn-secondary" onClick={handleAddNewRow}>
             Add Row
           </button>

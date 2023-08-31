@@ -158,7 +158,7 @@ const ObjectProperty: React.FC<ObjectPropertyProps> = ({
   const [type, setType] = useState(defaultType ?? "");
   const [value, setValue] = useState(defaultValue ?? "");
   return (
-    <li className="flex justify-between gap-2 bg-slate-300 p-1">
+    <li className="flex w-64 justify-between gap-2 bg-slate-300 p-1">
       <span>{propertyName}: </span>
       <select
         value={type}

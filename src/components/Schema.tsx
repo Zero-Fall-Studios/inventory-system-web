@@ -121,10 +121,10 @@ export const Schema: React.FC = () => {
   const { selectedTable, schema } = useDatabase();
   return (
     <div>
-      <h3 className="p-2 dark:text-white">Table {selectedTable}</h3>
+      <h3 className="p-2 text-white">Table: {selectedTable}</h3>
       <div>
         <div className="flex flex-col gap-2">
-          <div className="bg-slate-200">
+          <div className="bg-slate-300">
             {Object.keys(schema).map((columnName, index) => {
               const column = schema[columnName]!;
               return (

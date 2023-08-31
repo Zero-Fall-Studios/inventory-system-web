@@ -9,7 +9,7 @@ export const Tables: React.FC = () => {
         <div
           key={tableName}
           className={`flex justify-between gap-2 p-2 sm:flex-col ${
-            selectedTable === tableName ? "bg-gray-300 " : ""
+            selectedTable === tableName ? "bg-slate-300 " : ""
           }`}
         >
           <h3
