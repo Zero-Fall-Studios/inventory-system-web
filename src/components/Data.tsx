@@ -182,7 +182,7 @@ export const Data: React.FC = () => {
             {data.map((row: Row, rowIndex: number) => (
               <tr
                 key={row.id}
-                className="border-b bg-white dark:border-gray-700 "
+                className="border-b bg-slate-300 dark:border-gray-700 "
               >
                 {columnNames.map((columnName) => {
                   const column = table?.schema[columnName];
