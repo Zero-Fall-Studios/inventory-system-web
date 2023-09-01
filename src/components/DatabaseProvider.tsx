@@ -38,6 +38,7 @@ export type DatabaseContextProps = {
   getCurrentValue: (rowIndex: number, columnName: string) => any;
   exportData: (tableName: string) => void;
   deleteRow: (index: number) => void;
+  setDatabaseFromString: (dataStr: string) => void;
 };
 
 const DatabaseContext = createContext<DatabaseContextProps | null>(null);
@@ -246,6 +247,15 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
     return null;
   };
 
+  const setDatabaseFromString = (dataStr: string) => {
+    try {
+      const data = JSON.parse(dataStr) as Database;
+      setDatabase(data);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <DatabaseContext.Provider
       value={{
@@ -267,6 +277,7 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
         getCurrentValue,
         exportData,
         deleteRow,
+        setDatabaseFromString,
       }}
     >
       {children}
