@@ -119,7 +119,7 @@ export const Data: React.FC = () => {
         field = column?.default_values?.[0] ?? 0;
       }
       if (column?.type === "boolean") {
-        field = column?.default_values?.[0] ?? false;
+        field = Boolean(column?.default_values?.[0]) ?? false;
       }
       if (column?.type === "null") {
         field = column?.default_values?.[0] ?? null;

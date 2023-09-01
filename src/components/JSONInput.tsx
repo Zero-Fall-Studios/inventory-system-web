@@ -9,6 +9,7 @@ import {
   possibleObjectTypes,
 } from "~/types/database.types";
 import { removeItemAtIndex } from "~/utils/removeItemAtIndex";
+import { nanoid } from "nanoid";
 
 interface StringInputProps {
   defaultValue: string;
@@ -112,10 +113,7 @@ export const ArrayInput: React.FC<ArrayInputProps> = ({
   return (
     <ul>
       {value.map((item, index) => (
-        <li
-          className="flex justify-between gap-2 pb-2"
-          key={`${index}-${item}`}
-        >
+        <li className="flex justify-between gap-2 pb-2" key={index}>
           <JSONInput
             defaultValue={item}
             onChange={(newValue) => handleOnChange(index, newValue as string)}
