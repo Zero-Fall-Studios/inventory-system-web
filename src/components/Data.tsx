@@ -43,6 +43,56 @@ const SelectPossibleValuesInput: React.FC<SelectPossibleValuesInputProps> = ({
   );
 };
 
+type ObjectInputProps = {
+  rowIndex: number;
+  column: ColumnData;
+  columnName: string;
+};
+
+const ObjectInput: React.FC<ObjectInputProps> = ({
+  rowIndex,
+  column,
+  columnName,
+}) => {
+  const { onColumnValueChange, getCurrentValue } = useDatabase();
+  const currentValue = getCurrentValue(rowIndex, columnName);
+  const [value, setValue] = useState<string>(
+    currentValue ?? getDefaultValue({ column }) ?? ""
+  );
+  const [isHovered, setIsHovered] = useState(false);
+  return (
+    <div
+      className="cell cursor-pointer"
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {isHovered ? (
+        <div className="popover">
+          <div className="popover-content">
+            <JSONInput
+              defaultValue={value}
+              onChange={(newValue: any) => {
+                setValue(newValue);
+                onColumnValueChange(rowIndex, columnName, newValue);
+              }}
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="flex">
+          <div>
+            <button
+              className="btn-secondary"
+              onClick={() => setIsHovered(!isHovered)}
+            >
+              View
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const getDefaultValue = ({ column }: { column: ColumnData }) => {
   if (column?.type === "string") {
     return "";
@@ -81,6 +131,15 @@ const ColumnInput = ({
   if (column.type === "select") {
     return (
       <SelectPossibleValuesInput
+        rowIndex={rowIndex}
+        column={column}
+        columnName={columnName}
+      />
+    );
+  }
+  if (column.type === "object") {
+    return (
+      <ObjectInput
         rowIndex={rowIndex}
         column={column}
         columnName={columnName}

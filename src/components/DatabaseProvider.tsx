@@ -206,7 +206,7 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "data.json";
+    a.download = `${tableName}.json`;
     a.click();
   };
 

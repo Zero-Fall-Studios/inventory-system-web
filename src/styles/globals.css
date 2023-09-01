@@ -36,4 +36,20 @@
         @apply py-1 px-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75;
     }
 
+    .cell {
+        position: relative;
+    }
+    
+    .popover {
+        position: absolute;
+        top: 25px;
+        left: 0;
+        width: 300px;
+        height: 200px;
+        overflow: auto;
+        z-index: 10;
+        background-color: white;
+        border: 1px solid #ccc;
+    }
+
 }
