@@ -72,7 +72,7 @@ export const BooleanInput: React.FC<BooleanInputProps> = ({
 }) => {
   const [value, setValue] = useState<boolean>(defaultValue ?? false);
   const handleOnChange = (event: any) => {
-    const newValue = Boolean(event.target.value);
+    const newValue = Boolean(event.target.value === "true");
     onChange(newValue);
     setValue(newValue);
   };
