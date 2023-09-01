@@ -43,6 +43,84 @@ const SelectPossibleValuesInput: React.FC<SelectPossibleValuesInputProps> = ({
   );
 };
 
+type ObjectDataPropertyProps = {
+  propertyName: string;
+  defaultType: string;
+  defaultValue: string;
+  handleOnChangeDefaultValue: (key: string, newValue: string | null) => void;
+};
+
+const ObjectDataProperty: React.FC<ObjectDataPropertyProps> = ({
+  propertyName,
+  defaultType,
+  defaultValue,
+  handleOnChangeDefaultValue,
+}) => {
+  const [value, setValue] = useState(defaultValue ?? "");
+  return (
+    <li className="flex w-72 justify-between gap-2 bg-slate-300 p-1">
+      <span className="w-72 truncate" title={propertyName}>
+        {propertyName}: {defaultType}
+      </span>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => {
+          const newValue = e.target.value;
+          setValue(newValue);
+          handleOnChangeDefaultValue(propertyName, newValue);
+        }}
+        className="w-full"
+        placeholder="Default Value"
+      />
+    </li>
+  );
+};
+
+interface ObjectDataInputProps {
+  rowIndex: number;
+  column: ColumnData;
+  columnName: string;
+}
+
+export const ObjectDataInput: React.FC<ObjectDataInputProps> = ({
+  rowIndex,
+  column,
+  columnName,
+}) => {
+  const { getCurrentValue } = useDatabase();
+  const currentValue = getCurrentValue(rowIndex, columnName);
+  const [value, setValue] = useState<any>(
+    currentValue ?? getDefaultValue({ column }) ?? {}
+  );
+
+  const { onColumnValueChange } = useDatabase();
+  const handleOnChangeDefaultValue = (key: string, newValue: string | null) => {
+    const newObj = { ...value };
+    newObj[key] = [newValue];
+    onColumnValueChange(rowIndex, columnName, newObj);
+    setValue(newObj);
+  };
+  return (
+    <ul>
+      {Object.keys(column?.possible_values ?? {}).map((key: any, index) => {
+        const possible_values: any = column?.possible_values ?? {};
+        const type = possible_values[key]?.type ?? "string";
+        const defaultValue = value[key];
+        return (
+          <ObjectDataProperty
+            key={`${index}-${key}`}
+            propertyName={key}
+            defaultType={type}
+            defaultValue={defaultValue}
+            handleOnChangeDefaultValue={handleOnChangeDefaultValue}
+          />
+        );
+      })}
+    </ul>
+  );
+};
+
 type ObjectInputProps = {
   rowIndex: number;
   column: ColumnData;
@@ -54,11 +132,6 @@ const ObjectInput: React.FC<ObjectInputProps> = ({
   column,
   columnName,
 }) => {
-  const { onColumnValueChange, getCurrentValue } = useDatabase();
-  const currentValue = getCurrentValue(rowIndex, columnName);
-  const [value, setValue] = useState<string>(
-    currentValue ?? getDefaultValue({ column }) ?? ""
-  );
   const [isHovered, setIsHovered] = useState(false);
   return (
     <div
@@ -68,12 +141,10 @@ const ObjectInput: React.FC<ObjectInputProps> = ({
       {isHovered ? (
         <div className="popover">
           <div className="popover-content">
-            <JSONInput
-              defaultValue={value}
-              onChange={(newValue: any) => {
-                setValue(newValue);
-                onColumnValueChange(rowIndex, columnName, newValue);
-              }}
+            <ObjectDataInput
+              rowIndex={rowIndex}
+              column={column}
+              columnName={columnName}
             />
           </div>
         </div>
@@ -187,10 +258,16 @@ export const Data: React.FC = () => {
         field = column?.possible_values ?? [];
       }
       if (column?.type === "object") {
-        field = column?.possible_values ?? {};
+        const newFieldObj: any = {};
+        const possible_values: any = column?.possible_values ?? {};
+        Object.keys(possible_values).forEach((value) => {
+          newFieldObj[value] = possible_values[value]?.default_values ?? [];
+        });
+        field = newFieldObj;
       }
       newRow[columnName] = field;
     });
+    console.log({ newRow });
     addRow(newRow);
   };
   const handleDeleteRow = (index: number) => {
