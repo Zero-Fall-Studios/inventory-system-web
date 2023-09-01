@@ -4,7 +4,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useLocalStorage } from "usehooks-ts";
 import type {
   ColumnData,
@@ -52,8 +58,15 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
     name: "",
     tables: {},
   });
-  const [selectedTable, setSelectedTable] = useState("");
-  const [selectedView, setSelectedView] = useState<"schema" | "data">("schema");
+  const [selectedTable, setSelectedTable] = useLocalStorage(
+    "selectedTable",
+    ""
+  );
+  const [selectedView, setSelectedView] = useLocalStorage<"schema" | "data">(
+    "selectedView",
+    "schema"
+  );
+  const [firstRender, setFirstRender] = useState(true);
 
   const setDatabaseName = (name: string) => {
     const dbCopy = { ...database };
@@ -166,20 +179,26 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
     }
   };
 
-  const viewSchema = (tableName: string) => {
-    setSelectedTable(tableName);
-    setSelectedView("schema");
-    if (database.tables[tableName]?.schema) {
-      setSchema(database.tables[tableName]?.schema ?? {});
-    }
-  };
-  const viewData = (tableName: string) => {
-    setSelectedView("data");
-    setSelectedTable(tableName);
-    if (database.tables[tableName]?.schema) {
-      setSchema(database.tables[tableName]?.schema ?? {});
-    }
-  };
+  const viewSchema = useCallback(
+    (tableName: string) => {
+      setSelectedTable(tableName);
+      setSelectedView("schema");
+      if (database.tables[tableName]?.schema) {
+        setSchema(database.tables[tableName]?.schema ?? {});
+      }
+    },
+    [database.tables, setSelectedTable, setSelectedView]
+  );
+  const viewData = useCallback(
+    (tableName: string) => {
+      setSelectedView("data");
+      setSelectedTable(tableName);
+      if (database.tables[tableName]?.schema) {
+        setSchema(database.tables[tableName]?.schema ?? {});
+      }
+    },
+    [database.tables, setSelectedTable, setSelectedView]
+  );
   const exportData = (tableName: string) => {
     const data = database.tables[tableName]?.data ?? [];
     const jsonString = JSON.stringify(data);
@@ -255,6 +274,19 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
       console.error(e);
     }
   };
+
+  useEffect(() => {
+    if (firstRender) {
+      if (selectedTable) {
+        if (selectedView === "schema") {
+          viewSchema(selectedTable);
+        } else if (selectedView === "data") {
+          viewData(selectedTable);
+        }
+      }
+      setFirstRender(false);
+    }
+  }, [firstRender, selectedTable, selectedView, viewData, viewSchema]);
 
   return (
     <DatabaseContext.Provider

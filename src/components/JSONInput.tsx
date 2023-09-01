@@ -9,7 +9,6 @@ import {
   possibleObjectTypes,
 } from "~/types/database.types";
 import { removeItemAtIndex } from "~/utils/removeItemAtIndex";
-import { nanoid } from "nanoid";
 
 interface StringInputProps {
   defaultValue: string;
