@@ -254,6 +254,9 @@ export const Data: React.FC = () => {
       if (column?.type === "null") {
         field = column?.default_values?.[0] ?? null;
       }
+      if (column?.type === "select") {
+        field = column?.possible_values ? column?.possible_values?.[0] : "";
+      }
       if (column?.type === "array") {
         field = column?.possible_values ?? [];
       }

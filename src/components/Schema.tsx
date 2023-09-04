@@ -53,6 +53,33 @@ const ObjectShapeInput: React.FC<ObjectShapeInputProps> = ({ columnName }) => {
   );
 };
 
+type BooleanValueInputProps = {
+  columnName: string;
+};
+
+const BooleanValueInput: React.FC<BooleanValueInputProps> = ({
+  columnName,
+}) => {
+  const { onChangeDefaultValues, selectedTable, database } = useDatabase();
+  const table = database?.tables[selectedTable];
+  const schema = table?.schema ?? {};
+  const column = (schema[columnName] ?? {}) as ColumnData;
+  const [value, setValue] = useState<boolean>(
+    column?.default_values?.[0]
+      ? Boolean(column?.default_values?.[0] === "true")
+      : false
+  );
+  return (
+    <JSONInput
+      defaultValue={value}
+      onChange={(newValue) => {
+        setValue(newValue);
+        onChangeDefaultValues(columnName, [newValue]);
+      }}
+    />
+  );
+};
+
 type DefaultValueInputProps = {
   columnName: string;
 };
@@ -106,7 +133,8 @@ const Column: React.FC<ColumnProps> = ({ column, columnName }) => {
           <SelectPossibleValuesInput columnName={columnName} />
         )}
         {type === "object" && <ObjectShapeInput columnName={columnName} />}
-        {type !== "select" && type !== "object" && (
+        {type === "boolean" && <BooleanValueInput columnName={columnName} />}
+        {type !== "select" && type !== "object" && type !== "boolean" && (
           <DefaultValueInput columnName={columnName} />
         )}
       </div>

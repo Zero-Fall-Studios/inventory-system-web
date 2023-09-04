@@ -99,7 +99,10 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
         const dbCopy = { ...database };
         dbCopy.tables = {
           ...dbCopy.tables,
-          [selectedTable]: { schema: newSchema, data: [] },
+          [selectedTable]: {
+            schema: newSchema,
+            data: dbCopy.tables[selectedTable]?.data ?? [],
+          },
         };
         setDatabase(dbCopy);
       }
@@ -115,7 +118,10 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
         const dbCopy = { ...database };
         dbCopy.tables = {
           ...dbCopy.tables,
-          [selectedTable]: { schema: newSchema, data: [] },
+          [selectedTable]: {
+            schema: newSchema,
+            data: dbCopy.tables[selectedTable]?.data ?? [],
+          },
         };
         setDatabase(dbCopy);
       }
@@ -134,7 +140,10 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
         const dbCopy = { ...database };
         dbCopy.tables = {
           ...dbCopy.tables,
-          [selectedTable]: { schema: newSchema, data: [] },
+          [selectedTable]: {
+            schema: newSchema,
+            data: dbCopy.tables[selectedTable]?.data ?? [],
+          },
         };
         setDatabase(dbCopy);
       }
@@ -153,7 +162,10 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
         const dbCopy = { ...database };
         dbCopy.tables = {
           ...dbCopy.tables,
-          [selectedTable]: { schema: newSchema, data: [] },
+          [selectedTable]: {
+            schema: newSchema,
+            data: dbCopy.tables[selectedTable]?.data ?? [],
+          },
         };
         setDatabase(dbCopy);
       }
@@ -172,7 +184,10 @@ const DatabaseProvider: React.FC<ProviderProps> = ({ children }) => {
         const dbCopy = { ...database };
         dbCopy.tables = {
           ...dbCopy.tables,
-          [selectedTable]: { schema: newSchema, data: [] },
+          [selectedTable]: {
+            schema: newSchema,
+            data: dbCopy.tables[selectedTable]?.data ?? [],
+          },
         };
         setDatabase(dbCopy);
       }
